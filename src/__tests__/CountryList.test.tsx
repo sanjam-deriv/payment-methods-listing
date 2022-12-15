@@ -26,19 +26,24 @@ describe("Payment Method", () => {
   });
 
   it("Should render Country Dropdown", () => {
-
+    const dropdown = screen.getByTestId('country-dropdown');
+    expect(dropdown).toBeInTheDocument();
   });
 
   it("Should render Get List button", () => {
-
+    const list_button = screen.getByText('Get List');
+    expect(list_button).toBeInTheDocument();
   });
 
   it("Should render Clear button", () => {
-
+    const clear_button = screen.getByText('Clear');
+    expect(clear_button).toBeInTheDocument();
   });
 
   it("Should not render payment methods table on first render", () => {
-
+    server.send(fake_payment_methods);
+    const table = screen.getByTestId('table-body');
+    expect(table).toBeNull();
   });
 
   it("Should get residence list on first render from websocket server", async () => {
@@ -52,26 +57,44 @@ describe("Payment Method", () => {
   });
 
   it("Should have placeholder option as selected", () => {
-
+    const select_placeholder_option = screen.getByRole("option", {
+      name: "Please select a country",
+    }) as HTMLOptionElement;
+    expect(select_placeholder_option.selected).toBe(true)
   });
 
   it("Should render Clear button as disabled", () => {
+    const clear_button = screen.getByText('Clear');
+    expect(clear_button.closest('button')).toHaveAttribute('disabled');
 
   });
 
   it("Should change the selected option properly", async () => {
-
+    server.send(fake_residence_list)
+    await userEvent.selectOptions(screen.getByTestId('country-dropdown'), "zw");
+    const select_placeholder_option = screen.getByRole("option", {
+      name: "Zimbabwe - zw",
+    }) as HTMLOptionElement;
+    expect(select_placeholder_option.selected).toBe(true)
   });
 
   it("Should render Clear button as enabled after country selection", async () => {
-
+    server.send(fake_residence_list)
+    const clear_button = screen.getByText('Clear');
+    await userEvent.selectOptions(screen.getByTestId('country-dropdown'), "zw");
+    const select_placeholder_option = screen.getByRole("option", {
+      name: "Zimbabwe - zw",
+    }) as HTMLOptionElement;
+    expect(select_placeholder_option.selected).toBe(true)
+    expect(clear_button.closest('button')).toBeEnabled();
+  
   });
 
-  it("Should render the payment methods list on Get List button Click", async () => {
+  // it("Should render the payment methods list on Get List button Click", async () => {
+    
+  // });
 
-  });
-
-  it("Should clear dropdown on Clear button Click", async () => {
-
-  });
+  // it("Should clear dropdown on Clear button Click", async () => {
+  //   expect(true).toBe(false)
+  // });
 });
